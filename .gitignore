@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Compiled CPP files .exe
 *.exe
+
+# NotesProjet.txt file excluded from CV
+NotesProjet.txt
