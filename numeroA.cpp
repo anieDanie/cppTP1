@@ -1,3 +1,13 @@
+/*
+    Description: programme qui affiche certaines statistiques descriptives
+    d'un échantillon.
+
+    Auteure: Annie Rhéaume
+    Date : 07-05-2023
+    Version: 1
+
+*/
+
 #include <iostream>
 #include <iomanip>
 #include <string>
