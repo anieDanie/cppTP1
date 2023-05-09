@@ -9,10 +9,12 @@
     - transmission de paramètres par références
 
     Auteure: Annie Rhéaume
-    Date : 07-05-2023
-    Version : initiale en cours (il me reste à préciser les spécifications pour les points 3 et 4 pour les appels de fonctions)
-    NOTA: les fonctions afficherValExtremes() et afficherMoyenne() transmettent, pour l'instant,
-    leur paramètres EN VALEUR.
+    Date : 08-05-2023
+    Version initiale: cette version révise les fonctions calculerFrequences(), calculerValExtremes()
+    et calculerMoyenne(). Elles utilisent toutes un patron de fonction; calculerValExtremes() et 
+    calculerMoyenne() sont codées pour une transmission des paramètres par pointeurs des statistiques
+    à afficher, déclarées dans le programme principal. Je dois donc revoir la question 4, qui demande
+    que l'un des paramètres soit transmis PAR RÉFÉRENCE. Est-ce que ça signifie: nécessairement la moyenne?
 
 */
 
@@ -43,49 +45,49 @@ void afficherCaracteristiques(int caracteristique1[], float caracteristique2[], 
 }
 
 
-// Fonction qui affiche les fréquences selon un critère de sélection
-template<class T>
-void afficherFrequences(T caracteristique[], T valeurComparee, int nbScores)
-{
-    cout.setf(ios::fixed); // format décimal
-    cout.setf(ios::showpoint); // marqueur décimal
+// Fonction qui calcule les fréquences selon un critère de sélection. Retourne le nombre de fréquences (int),
+// Transmission par valeur des paramètres; utilisation d'un patron de fonction
 
+template<class T>
+int calculerFrequences(T caracteristique[], T valeurComparee, int nbScores)
+{
     int compteur = 0;
     for (int i = 0; i < nbScores ; i++)
     {
         if(caracteristique[i] >= valeurComparee)
             compteur++;
     } 
-
-    /* Il faut formater le nombre de décimales après la virgule: 0 pour l'age, 2 pour la taille et 1 pour le poids*/
-    cout << "Dans cet echantillon : " << compteur << " scores sont superieurs ou egaux a " << valeurComparee << endl;
-    cout << endl;
-    
+    return compteur;
+   
 }
 
 
-// Fonction qui affiche la valeur minimale et la valeur maximale d'une caractéristique d'un échantillon
+// Fonction qui calcule la valeur minimale et la valeur maximale d'une caractéristique d'un échantillon. Ne retourne rien.
+// Modification des variables Min et Max (déclarées dans le programme principal) via les pointeurs
 template<class T>
-void afficherValExtremes( T caracteristique[], int nbScores)
+void calculerValExtremes( T caracteristique[], int nbScores, T* ptrMin, T* ptrMax)
 {
-    float valMin = FLT_MAX;
-    float valMax = -FLT_MAX;
-    for (int i = 0; i < nbScores ; i++)
+    T valMin = caracteristique[0];
+    T valMax = caracteristique[0];
+    for (int i = 1; i < nbScores ; i++)
     {
         if(caracteristique[i] < valMin)
             valMin = caracteristique[i];
         if (caracteristique[i] > valMax)
             valMax = caracteristique[i];
     } 
-
-    /* Il faut formater le nombre de décimales après la virgule: 0 pour l'age, 2 pour la taille et 1 pour le poids*/
-    cout << "La valeur minimale est " << valMin << " et la valeur maximale est " << valMax << endl;
-    cout << endl;   
+    // Valeurs minimales et maximales pointées vers les variables Min et Max de la caractéristique
+    *ptrMin = valMin;
+    *ptrMax = valMax;
+   
 }
 
-// Fonction qui affiche la moyenne des scores d'une caractéristique de l'échantillon
-template<class T>
-void afficherMoyenne( T caracteristique[], int nbScores)
+// Fonction qui calcule la moyenne des scores d'une caractéristique de l'échantillon. Ne retourne rien.
+// Modification des variables moyenne (déclarées dans le programme principal) via les pointeurs
+// Pour le patron de fonction, voir: https://cplusplus.com/doc/oldtutorial/templates/
+// Ici, on suppose que le type de l'adresse de la valeur moyenne passée en paramètre peut aussi être de différents types (double et float) - sinon, double* ptrMoyenne
+template<class T, class U>
+void calculerMoyenne(T caracteristique[], int nbScores, U* ptrMoyenne)
 {
 
     float somme = 0.0f;
@@ -93,11 +95,8 @@ void afficherMoyenne( T caracteristique[], int nbScores)
     {
         somme += caracteristique[i];
     } 
-    double moyenne = somme / nbScores;
-
-    /* Il faut formater le nombre de décimales après la virgule: 2 */
-    cout << "La moyenne est " << moyenne << endl;
-    cout << endl;   
+    // Valeur moyenne pointée vers variable Moyenne de la caractéristique
+    *ptrMoyenne = somme / nbScores;  
 }
 
 
@@ -111,23 +110,48 @@ int main()
             poids[] = {65.3 ,67.1, 74.8, 77.7, 72.3, 56.4, 74.9, 72.1};
 
     int nbPers = sizeof(taille)/ sizeof(float); // float = 4 octets
-
-    string msg = "TODO";
+    
     // Mettre en forme un string pour entête du tableau
-
+    string msg = "TODO";
+    
+    // Afficher les caractéristiques en colonnes
     afficherCaracteristiques (age, taille, poids, nbPers, msg);
 
-    afficherFrequences(age, 18, nbPers);
-    afficherFrequences (taille, 1.73f, nbPers);
-    afficherFrequences (poids, 70.0f, nbPers);
+    // Calculer les fréquences
+    cout << "Nombre de personnes de 18 ans ou plus : " << 
+    calculerFrequences(age, 18, nbPers) << endl;
+    cout << "Nombre de personnes d'une taille superieure ou egale a 1.73 metre : " << 
+    calculerFrequences (taille, 1.73f, nbPers) << endl;
+    cout << "Nombre de personnes ayant un poids superieur ou egal a 70.0 kg : " << 
+    calculerFrequences (poids, 70.0f, nbPers) << endl;
+    cout << endl;
 
-    afficherValExtremes(age, nbPers);
-    afficherValExtremes(taille, nbPers);
-    afficherValExtremes (poids, nbPers);
+    // Calculer les valeurs mininales et maximales de chacune des caractéristiques et les afficher
+    int ageMin, ageMax;
+    float tailleMin, tailleMax, poidsMin, poidsMax;
 
-    afficherMoyenne(age,nbPers);
-    afficherMoyenne(taille,nbPers);
-    afficherMoyenne(poids,nbPers);
+    calculerValExtremes(age, nbPers, &ageMin, &ageMax);
+    calculerValExtremes(taille, nbPers, &tailleMin, &tailleMax);
+    calculerValExtremes (poids, nbPers, &poidsMin, &poidsMax);
+
+    cout << "Age minimal : " << ageMin << " ans.\nAge maximal : " << ageMax << " ans. " <<endl;
+    cout << "Taille minimale : " << tailleMin << " metre.\nTaille maximale : " << tailleMax << " metre. " <<endl;
+    cout << "Poids minimal : " << poidsMin << " kg.\nPoids maximal : " << poidsMax << " kg. " <<endl;
+    cout << endl;
+
+    // Calculer les moyennes de chacune des caractéristiques et les afficher
+
+    double ageMoyen; 
+    float tailleMoyenne, poidsMoyen;
+
+    calculerMoyenne(age,nbPers, &ageMoyen);
+    calculerMoyenne(taille,nbPers, &tailleMoyenne);
+    calculerMoyenne(poids,nbPers, &poidsMoyen);
+
+    cout << "Age moyen : " << ageMoyen << " ans." <<endl;
+    cout << "Taille moyenne : " << tailleMoyenne << " metre."<<endl;
+    cout << "Poids moyen : " << poidsMoyen << " kg." <<endl;
+    cout << endl;
 
     return 0;
 
@@ -150,22 +174,18 @@ int main()
     7    54     1.83      74.9
     8    50     1.71      72.1
 
-    Dans cet echantillon : 8 scores sont superieurs ou egaux a 18
+    Nombre de personnes de 18 ans ou plus : 8
+    Nombre de personnes d'une taille superieure ou egale a 1.73 metre : 2
+    Nombre de personnes ayant un poids superieur ou egal a 70.0 kg : 5
 
-    Dans cet echantillon : 2 scores sont superieurs ou egaux a 1.7
+    Age minimal : 18 ans.
+    Age maximal : 54 ans.
+    Taille minimale : 1.5 metre.
+    Taille maximale : 1.9 metre.
+    Poids minimal : 56.4 kg.
+    Poids maximal : 77.7 kg.
 
-    Dans cet echantillon : 5 scores sont superieurs ou egaux a 70.0
-
-    La valeur minimale est 18.0 et la valeur maximale est 54.0
-
-    La valeur minimale est 1.5 et la valeur maximale est 1.9
-
-    La valeur minimale est 56.4 et la valeur maximale est 77.7
-
-    La moyenne est 35.0
-
-    La moyenne est 1.7
-
-    La moyenne est 70.1
-
+    Age moyen : 35.0 ans.
+    Taille moyenne : 1.7 metre.
+    Poids moyen : 70.1 kg.
 */
