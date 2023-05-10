@@ -1,5 +1,6 @@
 /*
-    Description: programme qui affiche certaines statistiques descriptives
+    TP1 : numéro A
+	Description: programme qui affiche certaines statistiques descriptives
     d'un échantillon.
 
     Auteure: Annie Rhéaume

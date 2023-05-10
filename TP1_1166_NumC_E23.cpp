@@ -1,17 +1,15 @@
 
 /* 
-  TP1 - Numéro C
+  TP1 : numéro C
   Fichier Ex4.cpp modifié selon les spécifications du TP1, numéro C
   
   Description: programme qui affiche certaines statistiques descriptives
   d'un échantillon.
 
   Auteure: Annie Rhéaume
-  Date : 09-05-2023
-  Version initiale: pour l'instant, les numéros (1), (2) et (3). Il me faut vérifier si (2) et (3)
-  sont nécessairement des cas où les paramètres sont transmis par valeur...
-
-  Il me reste aussi à coder la fonction de tri (4).
+  Date : 10-05-2023
+  Version 1
+  
 */
                           
 
@@ -94,8 +92,37 @@ T calculerValMax(T caracteristique[], int nbScores)
     return valMax;
 }
 
+// Fonction qui permutent 2 valeurs transmises en paramètres. Ne retourne rien.
+// Transmission des paramètres par références
+template <class T>
+void permuterVal(T& val1, T& val2)
+{
+  T temp = val1;
+  val1 = val2;
+  val2 = temp;
+}
+
 // Fonction qui trie les données d'un tableau en ordre croissant
-// TODO
+// Transmission des paramètres par références
+void trier (int age[], int nbCafe[], char sexe[], float taille[], int nbElem)
+{
+  for (int i = 0; i < nbElem-1 ; i++)
+  {
+    int indMin = i;
+    for (int j = i+1; j < nbElem; j++){
+      if (taille[j] < taille[indMin])
+        indMin = j;
+      if (indMin != i) 
+      {
+        permuterVal(age[i], age[indMin]);
+        permuterVal(nbCafe[i], nbCafe[indMin]);
+        permuterVal(sexe[i], sexe[indMin]);
+        permuterVal(taille[i], taille[indMin]);
+      }
+    }
+  }
+}
+
 
 int main()
 {
@@ -147,14 +174,15 @@ int main()
   cout << endl;
 
   // Trier les scores selon la taille et afficher en console les données triées
-  // TODO
+  
+  trier(age, nbCafe, sexe, taille,nbPers);
+  afficher(age, nbCafe, sexe, taille, nbPers, " a la fin");
   
                                                        
   return 0;   
 }
 /* 
   Affichage en console
-  
   C:\Users\Annie\Desktop\cppTP1>TP1_1166_NumC_E23.exe
   Contenu des 4 tableaux  au debut :
   indice      age     cafe   sexe   taille
@@ -179,5 +207,14 @@ int main()
   Age maximal : 41 an(s)
   Consommation maximale de cafe : 6 cafe(s) par jour
   Taille maximale : 1.93 metre
+
+  Contenu des 4 tableaux  a la fin :
+  indice      age     cafe   sexe   taille
+    0)         37       6     F      1.57
+    1)         41       0     F      1.65
+    2)         25       3     F      1.72
+    3)         19       4     M      1.84
+    4)         37       2     F      1.85
+    5)         20       3     M      1.93
 
 */
