@@ -1,20 +1,16 @@
 /*
+    TP1: numéro B
     Description: programme qui affiche certaines statistiques descriptives
     d'un échantillon.
 
-    - patron de fonction : template <class T> ?
-    Lien: https://h-deb.clg.qc.ca/Sujets/Divers--cplusplus/templates.html
-
-    - transmission de paramètres par pointeurs
-    - transmission de paramètres par références
+    - patron de fonction : template <class T> : (2) (3) (4)
+    - transmission de paramètres par valeur (1) et (2)
+    - transmission de paramètres par pointeurs (3)
+    - transmission de paramètres par références (4)
 
     Auteure: Annie Rhéaume
-    Date : 08-05-2023
-    Version initiale: cette version révise les fonctions calculerFrequences(), calculerValExtremes()
-    et calculerMoyenne(). Elles utilisent toutes un patron de fonction; calculerValExtremes() et 
-    calculerMoyenne() sont codées pour une transmission des paramètres par pointeurs des statistiques
-    à afficher, déclarées dans le programme principal. Je dois donc revoir la question 4, qui demande
-    que l'un des paramètres soit transmis PAR RÉFÉRENCE. Est-ce que ça signifie: nécessairement la moyenne?
+    Date : 09-05-2023
+    Version 1 : revoir le string msg à mettre en forme
 
 */
 
@@ -41,12 +37,11 @@ void afficherCaracteristiques(int caracteristique1[], float caracteristique2[], 
         cout << setw(3) << i+1 << setw(6) << caracteristique1[i] << setw(9) << setprecision(2) << 
         caracteristique2[i] << setw(10) << setprecision(1) << caracteristique3[i] << endl;
     }
-    cout << endl;
 }
 
 
 // Fonction qui calcule les fréquences selon un critère de sélection. Retourne le nombre de fréquences (int),
-// Transmission par valeur des paramètres; utilisation d'un patron de fonction
+// Transmission par valeur des paramètres; utilisation d'un patron de fonction.
 
 template<class T>
 int calculerFrequences(T caracteristique[], T valeurComparee, int nbScores)
@@ -63,7 +58,7 @@ int calculerFrequences(T caracteristique[], T valeurComparee, int nbScores)
 
 
 // Fonction qui calcule la valeur minimale et la valeur maximale d'une caractéristique d'un échantillon. Ne retourne rien.
-// Modification des variables Min et Max (déclarées dans le programme principal) via les pointeurs
+// Modification des variables Min et Max (déclarées dans le programme principal) via leurs pointeurs
 template<class T>
 void calculerValExtremes( T caracteristique[], int nbScores, T* ptrMin, T* ptrMax)
 {
@@ -76,18 +71,16 @@ void calculerValExtremes( T caracteristique[], int nbScores, T* ptrMin, T* ptrMa
         if (caracteristique[i] > valMax)
             valMax = caracteristique[i];
     } 
-    // Valeurs minimales et maximales pointées vers les variables Min et Max de la caractéristique
+    // Modification des valeurs minimale et maximale pointées par ptrMin et ptrMax
     *ptrMin = valMin;
     *ptrMax = valMax;
    
 }
 
 // Fonction qui calcule la moyenne des scores d'une caractéristique de l'échantillon. Ne retourne rien.
-// Modification des variables moyenne (déclarées dans le programme principal) via les pointeurs
-// Pour le patron de fonction, voir: https://cplusplus.com/doc/oldtutorial/templates/
-// Ici, on suppose que le type de l'adresse de la valeur moyenne passée en paramètre peut aussi être de différents types (double et float) - sinon, double* ptrMoyenne
-template<class T, class U>
-void calculerMoyenne(T caracteristique[], int nbScores, U* ptrMoyenne)
+// Modification des variables moyennes (déclarées dans le programme principal) via leur référence
+template<class T>
+void calculerMoyenne(T caracteristique[], int nbScores, float& refMoyenne)
 {
 
     float somme = 0.0f;
@@ -95,8 +88,8 @@ void calculerMoyenne(T caracteristique[], int nbScores, U* ptrMoyenne)
     {
         somme += caracteristique[i];
     } 
-    // Valeur moyenne pointée vers variable Moyenne de la caractéristique
-    *ptrMoyenne = somme / nbScores;  
+    // Modification de la valeur de la variable "moyenne" référencée par refMoyenne
+    refMoyenne = somme / nbScores;  
 }
 
 
@@ -116,6 +109,7 @@ int main()
     
     // Afficher les caractéristiques en colonnes
     afficherCaracteristiques (age, taille, poids, nbPers, msg);
+    cout << endl;
 
     // Calculer les fréquences
     cout << "Nombre de personnes de 18 ans ou plus : " << 
@@ -135,20 +129,19 @@ int main()
     calculerValExtremes (poids, nbPers, &poidsMin, &poidsMax);
 
     cout << "Age minimal : " << ageMin << " ans.\nAge maximal : " << ageMax << " ans. " <<endl;
-    cout << "Taille minimale : " << tailleMin << " metre.\nTaille maximale : " << tailleMax << " metre. " <<endl;
-    cout << "Poids minimal : " << poidsMin << " kg.\nPoids maximal : " << poidsMax << " kg. " <<endl;
+    cout << "Taille minimale : "<< setprecision(2) << tailleMin << " metre.\nTaille maximale : " << tailleMax << " metre. " <<endl;
+    cout << "Poids minimal : " << setprecision(1) << poidsMin << " kg.\nPoids maximal : " << poidsMax << " kg. " <<endl;
     cout << endl;
 
     // Calculer les moyennes de chacune des caractéristiques et les afficher
+ 
+    float ageMoyen, tailleMoyenne, poidsMoyen;
 
-    double ageMoyen; 
-    float tailleMoyenne, poidsMoyen;
+    calculerMoyenne(age,nbPers, ageMoyen);
+    calculerMoyenne(taille,nbPers, tailleMoyenne);
+    calculerMoyenne(poids,nbPers, poidsMoyen);
 
-    calculerMoyenne(age,nbPers, &ageMoyen);
-    calculerMoyenne(taille,nbPers, &tailleMoyenne);
-    calculerMoyenne(poids,nbPers, &poidsMoyen);
-
-    cout << "Age moyen : " << ageMoyen << " ans." <<endl;
+    cout << "Age moyen : " << setprecision(2) << ageMoyen << " ans." <<endl;
     cout << "Taille moyenne : " << tailleMoyenne << " metre."<<endl;
     cout << "Poids moyen : " << poidsMoyen << " kg." <<endl;
     cout << endl;
@@ -158,7 +151,6 @@ int main()
 }
 
 /*
-
     Affichage en console
 
     C:\Users\Annie\Desktop\cppTP1>numeroB.exe
@@ -180,12 +172,13 @@ int main()
 
     Age minimal : 18 ans.
     Age maximal : 54 ans.
-    Taille minimale : 1.5 metre.
-    Taille maximale : 1.9 metre.
+    Taille minimale : 1.54 metre.
+    Taille maximale : 1.91 metre.
     Poids minimal : 56.4 kg.
     Poids maximal : 77.7 kg.
 
-    Age moyen : 35.0 ans.
-    Taille moyenne : 1.7 metre.
-    Poids moyen : 70.1 kg.
+    Age moyen : 35.00 ans.
+    Taille moyenne : 1.70 metre.
+    Poids moyen : 70.07 kg.
+
 */

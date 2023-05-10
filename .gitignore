@@ -402,3 +402,6 @@ FodyWeavers.xsd
 
 # NotesProjet.txt file excluded from CV
 NotesProjet.txt
+
+# repertoire Code qui contient des fichiers .cpp anciens pour consultation rapide
+code/*.cpp
