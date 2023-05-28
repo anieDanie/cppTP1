@@ -4,7 +4,7 @@
     d'un échantillon.
 
     Auteure: Annie Rhéaume
-    Date : 07-05-2023
+    Dernière m-a-j: 28-05-2023
     Version: 1
 
 */
@@ -16,15 +16,18 @@
 
 using namespace std;
 
-// Fonction qui affiche les caractéristiques (variables continues) d'un échantillon en colonnes
+/*
+    Fonction qui affiche les caractéristiques (variables continues) d'un échantillon en colonnes.
+    Ne retourne rien.
+*/ 
 
-void afficherCaracteristiques(float caracteristique1[], float caracteristique2[], int nbScores, string message)
+void afficherCaracteristiques(float caracteristique1[], float caracteristique2[],
+int nbScores)
 {
     cout.setf(ios::fixed); // format décimal
     cout.setf(ios::showpoint); // marqueur décimal
 
     cout << "Caracteristiques de l'echantillon : \n" << endl;
-    // cout << message << endl; // TODO
     cout << "Score" << setw(10) << "Taille" << setw(9) << "Poids" << endl;
 
     for (int i = 0; i < nbScores ; i++)
@@ -35,9 +38,12 @@ void afficherCaracteristiques(float caracteristique1[], float caracteristique2[]
     cout << endl;
 }
 
-// Fonction qui affiche les fréquences selon un critère de sélection
+/*
+    Fonction qui calcule les fréquences selon un critère de sélection. 
+    Retourne les fréquences (type int).
+*/ 
 
-void afficherFrequences(float caracteristique[], float valeurComparee, int nbScores)
+int calculerFrequences(float caracteristique[], float valeurComparee, int nbScores)
 {
     cout.setf(ios::fixed); // format décimal
     cout.setf(ios::showpoint); // marqueur décimal
@@ -48,16 +54,15 @@ void afficherFrequences(float caracteristique[], float valeurComparee, int nbSco
         if(caracteristique[i] >= valeurComparee)
             compteur++;
     } 
-
-    /* Il faut formater le nombre de décimales après la virgule: 2 pour la taille et 1 pour le poids*/
-    cout << "Dans cet echantillon : " << compteur << " scores sont superieurs ou egaux a " << valeurComparee << endl;
-    cout << endl;
-
+    return compteur;
 }
 
-// Fonction qui affiche une valeur minimale d'un échantillon
+/*
+    Fonction qui calcule la valeur minimale d'un échantillon.
+    Retourne cette valeur (type float)
+*/
 
-void afficherValMin(float caracteristique[], int nbScores)
+float calculerValMin(float caracteristique[], int nbScores)
 {
     float valMin = FLT_MAX ;
     for (int i = 0; i < nbScores ; i++)
@@ -65,10 +70,23 @@ void afficherValMin(float caracteristique[], int nbScores)
         if(caracteristique[i] < valMin)
             valMin = caracteristique[i];
     } 
+    return valMin;   
+}
 
-    /* Il faut formater le nombre de décimales après la virgule: 2 pour la taille et 1 pour le poids*/
-    cout << "Dans cet echantillon, la valeur minimale est " << valMin << endl;
-    cout << endl;   
+void afficherFrequences(float taille[], float poids[], int nbPers){
+
+    cout << "Nombre de personnes d'une taille superieure ou egale a 1.73 metre : " << 
+    calculerFrequences (taille, 1.73f, nbPers) << endl;
+
+    cout << "Nombre de personnes ayant un poids superieur ou egal a 70.0 kg : " << 
+    calculerFrequences (poids, 70.0f, nbPers) << endl;
+    cout << endl;
+}
+
+void afficherValMin(float taille[], float poids[], int nbPers){
+    cout << "Taille minimale de l'echantillon: " << setprecision(2) << calculerValMin(taille, nbPers) << " m" << endl;
+    cout << "Poids minimal de l'echantillon: "<< setprecision(1) << calculerValMin (poids, nbPers) << " kg" << endl;
+    cout<< endl;
 }
 
 int main()
@@ -81,29 +99,24 @@ int main()
 
     int nbPers = sizeof(taille)/ sizeof(float); // float = 4 octets
 
-    string msg = "TODO";
-    // Mettre en forme un string pour entête du tableau
+    // Q1- Afficher le contenu des 2 tableaux
+    afficherCaracteristiques (taille, poids, nbPers);
 
-    afficherCaracteristiques (taille, poids, nbPers, msg);
+    // Q2- Calculer et afficher les fréquences pour taille >= 1,73m et poids >= 70.0kg
+    afficherFrequences(taille, poids, nbPers);
 
-    afficherFrequences (taille, 1.73f, nbPers);
-    afficherFrequences (poids, 70.0f, nbPers);
-
-    afficherValMin(taille, nbPers);
-    afficherValMin (poids, nbPers);
+    // Q3 - Calculer les valeurs minimales des caractéristiques 'taille' et 'poids'
+    afficherValMin(taille, poids, nbPers);
 
     return 0;
-
 }
 
 /*
-
-    Affichage en console
-
+    AFFICHAGE
     C:\Users\Annie\Desktop\cppTP1>numeroA.exe
-    Caracteristiques de l'echantillon :
+    Caracteristiques de l'echantillon : 
 
-    Score  Taille    Poids
+    Score    Taille    Poids
     1      1.72      65.3
     2      1.65      67.1
     3      1.58      74.8
@@ -113,12 +126,10 @@ int main()
     7      1.83      74.9
     8      1.71      72.1
 
-    Dans cet echantillon : 2 scores sont superieurs ou egaux a 1.7
+    Nombre de personnes d'une taille superieure ou egale a 1.73 metre : 2
+    Nombre de personnes ayant un poids superieur ou egal a 70.0 kg : 5
 
-    Dans cet echantillon : 5 scores sont superieurs ou egaux a 70.0
-
-    Dans cet echantillon, la valeur minimale est 1.5
-
-    Dans cet echantillon, la valeur minimale est 56.4
+    Taille minimale de l'echantillon: 1.54 m
+    Poids minimal de l'echantillon: 56.4 kg
 
 */
